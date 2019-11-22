@@ -31,7 +31,7 @@ myReturnedFunc(20)
 
 //: ### Capturing variables
 //: In the following example, the var `counter` gets captured by the func `innerFunc` which is returned in the outer function.
-//: Each var (counterF1 and F2) have their own captured variable `counter`.
+//: Each var (counterF1 and F2) have their own captured variable `counter` and they will keep it around until the captured func gets destroyed.
 
 func counterFunc() -> (Int) -> String {
     var counter = 0
@@ -49,4 +49,47 @@ counterF1(10)
 let counterF2 = counterFunc()
 counterF2(5)
 counterF2(1)
+
+//: **Closure**: Combiantion of a func and an environment of captured variables
+//:
+//: ### Inout parameters and mutating methods
+/*:
+ When using `&` in `inout` params, they are **NOT** passed by reference. They are passed as **`passed-by-value-and-copy-back`**
+ 
+ `"An inout parameter has a value that is passed in to the function, is modified by the function, and is passed back out of the function to replace the original value."`
+ 
+ 
+ The `UnsafeMutablePointer` is **passed by reference**
+ */
+
+/*:
+ ### KeyPaths
+ It describes a path through a value hierarchy starting at the root value
+ **They can describe properties and subscripts**
+ 
+ IMPORTANT: They are **values**. This comes with certain advantages:
+ 1. You can test for *Equality*
+ 2. They are *Hashable* -> They can be used as keys in dicts
+ 3. Stateless
+ */
+
+struct Address {
+    var street: String
+    var city: String
+}
+
+struct Citizen {
+    let name: String
+    var address: Address
+}
+
+let nameKeyPath = \Citizen.name
+let cityKeyPath = \Citizen.address.city
+
+// This is Writable because all properties that form the path are mutable
+type(of: cityKeyPath)
+// This is only keyPath because it's not mutable
+type(of: nameKeyPath)
+
+
 
